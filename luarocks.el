@@ -33,6 +33,7 @@
 
 ;;; Code:
 (eval-when-compile (require 'subr-x))
+(require 'cl-lib)
 
 (defgroup luarocks nil
   "LuaRocks tools for Emacs."
@@ -55,7 +56,7 @@
 ;;;###autoload
 (defun luarocks-init ()
   "Initialize LuaRocks in this Emacs."
-  (cl-assert (executable-find luarocks-executable) t "LuaRocks executable not found: %s" luarocks-executable)
+  (cl-assert (executable-find luarocks-executable) nil "LuaRocks executable not found: %s" luarocks-executable)
   (setenv "LUA_PATH" (luarocks-command-to-string "path" "--lr-path"))
   (setenv "LUA_CPATH" (luarocks-command-to-string "path" "--lr-cpath"))
   (let ((binpaths (parse-colon-path (getenv "PATH"))))
