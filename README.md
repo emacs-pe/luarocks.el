@@ -3,7 +3,7 @@
 *Author:* Mario Rodas <marsam@users.noreply.github.com><br>
 *Version:* 0.1<br>
 
-[LuaRocks][] tools for Emacs.
+[LuaRocks][] tools.
 
 [LuaRocks]: https://luarocks.org/ "LuaRocks is a package manager for Lua modules."
 

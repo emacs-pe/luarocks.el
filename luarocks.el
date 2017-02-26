@@ -27,7 +27,7 @@
 
 ;;; Commentary:
 
-;; [LuaRocks][] tools for Emacs.
+;; [LuaRocks][] tools.
 ;;
 ;; [LuaRocks]: https://luarocks.org/ "LuaRocks is a package manager for Lua modules."
 
@@ -36,7 +36,7 @@
 (require 'cl-lib)
 
 (defgroup luarocks nil
-  "LuaRocks tools for Emacs."
+  "LuaRocks tools."
   :prefix "luarocks-"
   :group 'tools)
 
@@ -55,7 +55,7 @@
 
 ;;;###autoload
 (defun luarocks-init ()
-  "Initialize LuaRocks in this Emacs."
+  "Initialize LuaRocks."
   (cl-assert (executable-find luarocks-executable) nil "LuaRocks executable not found: %s" luarocks-executable)
   (setenv "LUA_PATH" (luarocks-command-to-string "path" "--lr-path"))
   (setenv "LUA_CPATH" (luarocks-command-to-string "path" "--lr-cpath"))
