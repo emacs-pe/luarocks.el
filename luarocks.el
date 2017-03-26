@@ -6,7 +6,7 @@
 ;; URL: https://github.com/emacs-pe/luarocks.el
 ;; Keywords: convenience
 ;; Version: 0.1
-;; Package-Requires: ((emacs "24.4"))
+;; Package-Requires: ((emacs "24") (cl-lib "0.5"))
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -32,7 +32,6 @@
 ;; [LuaRocks]: https://luarocks.org/ "LuaRocks is a package manager for Lua modules."
 
 ;;; Code:
-(eval-when-compile (require 'subr-x))
 (require 'cl-lib)
 
 (defgroup luarocks nil
@@ -45,22 +44,24 @@
   :type 'string
   :group 'luarocks)
 
-(defun luarocks-command-to-string (&rest args)
-  "Call `luarocks-executable' with ARGS and return a string with the output."
+(defun luarocks-exec-string (&rest args)
+  "Call `luarocks-executable' with ARGS, returning the first line of its output."
   (with-temp-buffer
     (let ((exit-code (apply #'process-file luarocks-executable nil t nil args)))
       (if (zerop exit-code)
-          (string-trim (buffer-string))
+          (unless (bobp)
+            (goto-char (point-min))
+            (buffer-substring-no-properties (point) (line-end-position)))
         (error "LuaRocks command failed with exit code %S and output: %s" exit-code (buffer-string))))))
 
 ;;;###autoload
 (defun luarocks-init ()
   "Initialize LuaRocks."
   (cl-assert (executable-find luarocks-executable) nil "LuaRocks executable not found: %s" luarocks-executable)
-  (setenv "LUA_PATH" (luarocks-command-to-string "path" "--lr-path"))
-  (setenv "LUA_CPATH" (luarocks-command-to-string "path" "--lr-cpath"))
+  (setenv "LUA_PATH" (luarocks-exec-string "path" "--lr-path"))
+  (setenv "LUA_CPATH" (luarocks-exec-string "path" "--lr-cpath"))
   (let ((binpaths (parse-colon-path (getenv "PATH"))))
-    (dolist (path (parse-colon-path (luarocks-command-to-string "path" "--lr-bin")))
+    (dolist (path (parse-colon-path (luarocks-exec-string "path" "--lr-bin")))
       (or (member path binpaths)
           (setenv "PATH" (concat path path-separator (getenv "PATH"))))
       (add-to-list 'exec-path path))))
