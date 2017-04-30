@@ -60,8 +60,11 @@
   (cl-assert (executable-find luarocks-executable) nil "LuaRocks executable not found: %s" luarocks-executable)
   (setenv "LUA_PATH" (luarocks-exec-string "path" "--lr-path"))
   (setenv "LUA_CPATH" (luarocks-exec-string "path" "--lr-cpath"))
-  (dolist (path (parse-colon-path (luarocks-exec-string "path" "--lr-bin")))
-    (add-to-list 'exec-path path)))
+  (let ((binpaths (parse-colon-path (getenv "PATH"))))
+    (dolist (path (parse-colon-path (luarocks-exec-string "path" "--lr-bin")))
+      (or (member path binpaths)
+          (setenv "PATH" (concat path path-separator (getenv "PATH"))))
+      (add-to-list 'exec-path path))))
 
 (provide 'luarocks)
 ;;; luarocks.el ends here
